@@ -23,8 +23,8 @@
       </span>
       <form v-if="guessingVillage.properties && playState=='playing'">
         [{{ nbSuccess+nbFail+1 }}/{{totalAttemps}}] Guess the name of the <span class="guessing-village">purple village</span> on the map:<br>
-        <span >
-          <button v-for="option in guessingOptions" @click="guess(option)">{{villageFullName(option)}}</button><br>
+        <span v-for="option in guessingOptions">
+          <button @click="guess(option)">{{villageFullName(option)}}</button><br>
         </span>
       </form>
     </div>
