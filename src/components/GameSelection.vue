@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import mapboxgl from "mapbox-gl";
 import { defineComponent } from 'vue';
 import { ref } from "vue";
 import HardGameMode from './HardGameMode.vue';
@@ -108,7 +107,7 @@ export default defineComponent({
     ])
 
     function initGame() {
-      import("../assets/layers/"+playgroundName.value+".json").then((importLayer) => {
+      import(`../assets/layers/${playgroundName.value}.json`).then((importLayer) => {
         playgroundLayer.value = importLayer;
         props.mapPromise.then((map) => {
           map.addSource(playgroundLayer.value.name, {
