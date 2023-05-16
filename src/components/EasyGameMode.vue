@@ -19,67 +19,80 @@
         Start a new game? 
         <button v-if="playState == 'finished'" @click="replay">
           RePlay!
-        </button>  
+        </button>
       </span>
-      <form v-if="guessingVillage.properties && playState=='playing'">
-        [{{ nbSuccess+nbFail+1 }}/{{totalAttemps}}] Guess the name of the <span class="guessing-village">purple village</span> on the map:<br>
+      <div v-if="guessingFeature.properties && playState=='playing'">
+        [{{ nbSuccess+nbFail+1 }}/{{totalAttemps}}] Guess the name of the <span class="guessing-feature">purple feature</span> on the map:<br>
         <span v-for="option in guessingOptions">
-          <button @click="guess(option)">{{villageFullName(option)}}</button><br>
+          <button @click="guess(option)">{{featureFullName(option)}}</button><br>
         </span>
-      </form>
+      </div>
     </div>
-    <div class="game-">
+    <div class="game-feedback">
       <span v-if="playState=='failed'">
         ❌ Wrong, sorry the response was:<br>
-        &gt;&gt; {{ villageFullName(guessingVillage) }} &lt;&lt;
+        &gt;&gt; {{ featureFullName(guessingFeature) }} &lt;&lt;
       </span>
-      <span v-if="playState=='success' && guessingVillage.properties.vname == guessedVillage.properties.vname">
+      <span v-if="playState=='success' && guessingFeature.properties.vname == guessedFeature.properties.vname">
         ✅ Success! You found:<br> 
-        &gt;&gt; {{ villageFullName(guessingVillage) }} &lt;&lt; ...
+        &gt;&gt; {{ featureFullName(guessingFeature) }} &lt;&lt; ...
       </span>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted } from 'vue';
 import { ref } from "vue";
 
 
 export default defineComponent({
   props: {
     mapPromise: Object,
-    dataSet: Object,
+    playgroundLayer: Object,
   },
   setup(props) {
-    let guessingVillage = ref({});
-    let guessingVillageName = ref('');
-    let guessedVillage = ref({})
+    let guessingFeature = ref({});
+    let guessingFeatureName = ref('');
+    let guessedFeature = ref({})
     let nbFail = ref(0);
     let nbSuccess = ref(0);
-    let playState = ref('notPlaying');
+    let playState = ref('playing');
     let guessingOptions = ref([])
     let bestScore = ref(null)
     let totalAttemps = ref(10)
 
-    function villageFullName(village) {
-      let villageFullName = 
-        village.properties?.vname + ", "
-        + village.properties?.dname + " - "
-        + village.properties?.l_vname + ", "
-        + village.properties?.l_dname;
-      return villageFullName
+
+    onMounted(() => { play()});
+
+    function featureFullName(feature) {
+      let featureFullName;
+      if (feature.properties?.vname)
+        featureFullName = 
+          feature.properties?.vname + ", "
+          + feature.properties?.dname + " - "
+          + feature.properties?.l_vname + ", "
+          + feature.properties?.l_dname;
+      else if (feature.properties?.dname)
+        featureFullName = 
+          feature.properties?.dname + " - "
+          + feature.properties?.l_dname;
+      else if (feature.properties?.pname)
+        featureFullName = 
+          feature.properties?.pname + " - "
+          + feature.properties?.l_pname;
+      return featureFullName
     }
     
     function guess(guessAttemp) {
-      guessedVillage.value = guessAttemp
+      guessedFeature.value = guessAttemp
       props.mapPromise.then((map)=> {
         // success
-        if (guessedVillage.value.id == guessingVillage.value.id) {
+        if (guessedFeature.value.id == guessingFeature.value.id) {
         nbSuccess.value ++;
         playState.value = 'success';
           map.setFeatureState(
-            { source: 'vteLvl1', id: guessingVillage.value.id },
+            { source: props.playgroundLayer.name, id: guessingFeature.value.id },
             { 
               guessing: false,
               success: true,
@@ -91,7 +104,7 @@ export default defineComponent({
           nbFail.value ++;
           playState.value = 'failed';
           map.setFeatureState(
-            { source: 'vteLvl1', id: guessingVillage.value.id },
+            { source: props.playgroundLayer.name, id: guessingFeature.value.id },
             { 
               fail: true,
               guessing: false
@@ -116,34 +129,34 @@ export default defineComponent({
       play()
     }
 
-    function setRandomVillages() {
-      let previousVillage = guessingVillage.value;
-      let newVillages = props.dataSet.features.sort(() => .5 - Math.random()).slice(0,5)
-      let newVillage = newVillages[Math.floor(Math.random() * newVillages.length)]
-      if (newVillage.id == previousVillage.id) setRandomVillages()
+    function setRandomFeatures() {
+      let previousFeature = guessingFeature.value;
+      let newFeatures = props.playgroundLayer.features.sort(() => .5 - Math.random()).slice(0,5)
+      let newFeature = newFeatures[Math.floor(Math.random() * newFeatures.length)]
+      if (newFeature.id == previousFeature.id) setRandomFeatures()
       else {
-        guessingOptions.value = newVillages
-        guessingVillage.value = newVillage
+        guessingOptions.value = newFeatures
+        guessingFeature.value = newFeature
       }
     }
 
     function play() {
       playState.value = "playing"
-      setRandomVillages()
+      setRandomFeatures()
       props.mapPromise.then((map)=> { 
         map.setFeatureState(
-          { source: 'vteLvl1', id: guessingVillage.value.id },
+          { source: props.playgroundLayer.name, id: guessingFeature.value.id },
           { guessing: true }
         );
       })
     }
 
     return {
-      guessingVillage,
-      guessingVillageName,
-      guessedVillage,
+      guessingFeature,
+      guessingFeatureName,
+      guessedFeature,
       guessingOptions,
-      villageFullName,
+      featureFullName,
       play,
       replay,
       guess,
@@ -152,7 +165,7 @@ export default defineComponent({
       nbFail,
       nbSuccess,
       bestScore,
-      setRandomVillages
+      setRandomFeatures
     };
   },
 });

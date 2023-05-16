@@ -1,6 +1,6 @@
 <template>
   <div class="game game-hard-mode">
-    --- Hard Mode ---<br>{{ playState }}
+    --- Hard Mode ---<br>
     <div v-if="playState != 'notPlaying' && playState != 'finished'" class="game-score">
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;🟢 Success: {{ nbSuccess }}&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    <br>
@@ -38,7 +38,7 @@ import { ref } from "vue";
 export default defineComponent({
   props: {
     mapPromise: Object,
-    dataSet: Object,
+    playgroundLayer: Object,
   },
   setup(props) {
     let clickedVillage = ref(null);
@@ -58,27 +58,27 @@ export default defineComponent({
     function play() {
       if (playState.value == "notPlaying") {
         props.mapPromise.then((map)=> { 
-          map.on('mousemove', 'vteLvl1Fill', (e) => {
+          map.on('mousemove', props.playgroundLayer.name+"Fill", (e) => {
             if (e.features.length > 0) {
               map.getCanvas().style.cursor = 'pointer'
               if (hoveredVillageId !== null) {
                 map.setFeatureState(
-                  { source: 'vteLvl1', id: hoveredVillageId },
+                  { source: props.playgroundLayer.name, id: hoveredVillageId },
                   { hover: false }
                 );
               }
               hoveredVillageId = e.features[0].id;
               map.setFeatureState(
-                { source: 'vteLvl1', id: hoveredVillageId },
+                { source: props.playgroundLayer.name, id: hoveredVillageId },
                 { hover: true }
               );
             }
           });
 
-          map.on('mouseleave', 'vteLvl1Fill', () => {
+          map.on('mouseleave', props.playgroundLayer.name+"Fill", () => {
             if (hoveredVillageId !== null) {
               map.setFeatureState(
-                { source: 'vteLvl1', id: hoveredVillageId },
+                { source: props.playgroundLayer.name, id: hoveredVillageId },
                 { hover: false }
               );
               map.getCanvas().style.cursor = ''
@@ -86,21 +86,21 @@ export default defineComponent({
             hoveredVillageId = null;
           });
 
-          map.on('click', 'vteLvl1Fill', (e) => {
+          map.on('click', props.playgroundLayer.name+"Fill", (e) => {
             clickedVillage.value = e.features[0]
             // success
             if (playState.value == 'playing' && clickedVillage.value.id == guessingVillage.value.id) {
               nbSuccess.value ++;
               playState.value = 'success';
               map.setFeatureState(
-                { source: 'vteLvl1', id: clickedVillage.value.id },
+                { source: props.playgroundLayer.name, id: clickedVillage.value.id },
                 { success: true }
               );
               // game must go on
               if (nbSuccess.value < 10) {
                 window.setTimeout(() => {
                   map.setFeatureState(
-                    { source: 'vteLvl1', id: clickedVillage.value.id },
+                    { source: props.playgroundLayer.name, id: clickedVillage.value.id },
                     { success: false }
                   );
                   play()
@@ -111,7 +111,7 @@ export default defineComponent({
                 playState.value = "finished"
                 window.setTimeout(() => {
                   map.setFeatureState(
-                    { source: 'vteLvl1', id: clickedVillage.value.id },
+                    { source: props.playgroundLayer.name, id: clickedVillage.value.id },
                     { success: false }
                   );
                 }, 2000);
@@ -122,12 +122,12 @@ export default defineComponent({
               nbFail.value ++;
               playState.value = 'failed';
               map.setFeatureState(
-                { source: 'vteLvl1', id: clickedVillage.value.id },
+                { source: props.playgroundLayer.name, id: clickedVillage.value.id },
                 { fail: true }
               );
               window.setTimeout(() => {
                 map.setFeatureState(
-                  { source: 'vteLvl1', id: clickedVillage.value.id },
+                  { source: props.playgroundLayer.name, id: clickedVillage.value.id },
                   { fail: false }
                 );
                 playState.value = 'playing';
@@ -137,8 +137,8 @@ export default defineComponent({
         })
       }
       playState.value = "playing"
-      guessingVillageIndex.value = Math.floor(Math.random() * props.dataSet.features.length);
-      guessingVillage.value = props.dataSet.features[guessingVillageIndex.value];
+      guessingVillageIndex.value = Math.floor(Math.random() * props.playgroundLayer.features.length);
+      guessingVillage.value = props.playgroundLayer.features[guessingVillageIndex.value];
     }
       
     return {
