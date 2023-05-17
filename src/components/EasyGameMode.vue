@@ -33,7 +33,7 @@
         ❌ Wrong, sorry the response was:<br>
         &gt;&gt; {{ featureFullName(guessingFeature) }} &lt;&lt;
       </span>
-      <span v-if="playState=='success' && guessingFeature.properties.vname == guessedFeature.properties.vname">
+      <span v-if="playState=='success'">
         ✅ Success! You found:<br> 
         &gt;&gt; {{ featureFullName(guessingFeature) }} &lt;&lt; ...
       </span>
@@ -73,10 +73,12 @@ export default defineComponent({
           + feature.properties?.dname + " - "
           + feature.properties?.l_vname + ", "
           + feature.properties?.l_dname;
-      else if (feature.properties?.dname)
-        featureFullName = 
-          feature.properties?.dname + " - "
-          + feature.properties?.l_dname;
+          else if (feature.properties?.dname)
+          featureFullName =
+          feature.properties?.dname + ", "
+          + feature.properties?.pname + " - "
+          + feature.properties?.l_dname + ", "
+          + feature.properties?.l_pname;
       else if (feature.properties?.pname)
         featureFullName = 
           feature.properties?.pname + " - "

@@ -38,10 +38,6 @@ export default {
 
       mapPromise.value = new Promise((resolve) => {
         map.on('load', () => resolve(map));
-        map.on('click', (e) => {
-          console.log(e.lngLat.lng)
-          console.log(e.lngLat.lat)
-        })
       });
 
     });

@@ -14,17 +14,18 @@
       <button v-if="playState == 'finished'" @click="replay()">
         RePlay!
       </button>
-      <span v-if="guessingVillage.properties && playState!='success' && playState!='finished'">
-        Guess: <strong>&gt;&gt;{{ guessingVillage.properties.vname }}&lt;&lt;</strong> 
+      <span v-if="guessingFeature.properties && playState!='success' && playState!='finished'">
+        Guess: &gt;&gt;<span v-html="featureFullName(guessingFeature)"></span>&lt;&lt;
       </span>
     </div>
     <div class="game-">
       <span v-if="playState=='failed'">
-        ❌ Wrong, this is {{ clickedVillage.properties.vname }}<br>
+        ❌ Wrong, this is <span v-html="featureFullName(clickedFeature)"></span>
+        <br>
       </span>
-      <span v-if="playState=='success' && guessingVillage.properties.vname == clickedVillage.properties.vname">
+      <span v-if="playState=='success'">
         ✅ Success! <br>
-        You found {{ clickedVillage.properties.vname }}...
+        You found <span v-html="featureFullName(clickedFeature)"></span>...
       </span>
     </div>
   </div>
@@ -41,10 +42,10 @@ export default defineComponent({
     playgroundLayer: Object,
   },
   setup(props) {
-    let clickedVillage = ref(null);
-    let guessingVillageIndex = ref({});
-    let guessingVillage = ref({});
-    let hoveredVillageId = null;
+    let clickedFeature = ref(null);
+    let guessingFeatureIndex = ref({});
+    let guessingFeature = ref({});
+    let hoveredFeatureId = null;
     let nbFail = ref(0);
     let nbSuccess = ref(0);
     let playState = ref('notPlaying');
@@ -55,52 +56,73 @@ export default defineComponent({
       play()
     }
 
+    function featureFullName(feature) {
+      let featureFullName;
+      if (feature.properties?.vname)
+        featureFullName = 
+          feature.properties?.vname + ", "
+          + feature.properties?.dname + "<br>"
+          + feature.properties?.l_vname + ", "
+          + feature.properties?.l_dname;
+          else if (feature.properties?.dname)
+          featureFullName = 
+          feature.properties?.dname + ", "
+          + feature.properties?.pname + "<br>"
+          + feature.properties?.l_dname + ", "
+          + feature.properties?.l_pname;
+      else if (feature.properties?.pname)
+        featureFullName = 
+          feature.properties?.pname + " - "
+          + feature.properties?.l_pname;
+      return featureFullName
+    }
+
     function play() {
       if (playState.value == "notPlaying") {
         props.mapPromise.then((map)=> { 
           map.on('mousemove', props.playgroundLayer.name+"Fill", (e) => {
             if (e.features.length > 0) {
               map.getCanvas().style.cursor = 'pointer'
-              if (hoveredVillageId !== null) {
+              if (hoveredFeatureId !== null) {
                 map.setFeatureState(
-                  { source: props.playgroundLayer.name, id: hoveredVillageId },
+                  { source: props.playgroundLayer.name, id: hoveredFeatureId },
                   { hover: false }
                 );
               }
-              hoveredVillageId = e.features[0].id;
+              hoveredFeatureId = e.features[0].id;
               map.setFeatureState(
-                { source: props.playgroundLayer.name, id: hoveredVillageId },
+                { source: props.playgroundLayer.name, id: hoveredFeatureId },
                 { hover: true }
               );
             }
           });
 
           map.on('mouseleave', props.playgroundLayer.name+"Fill", () => {
-            if (hoveredVillageId !== null) {
+            if (hoveredFeatureId !== null) {
               map.setFeatureState(
-                { source: props.playgroundLayer.name, id: hoveredVillageId },
+                { source: props.playgroundLayer.name, id: hoveredFeatureId },
                 { hover: false }
               );
               map.getCanvas().style.cursor = ''
             }
-            hoveredVillageId = null;
+            hoveredFeatureId = null;
           });
 
           map.on('click', props.playgroundLayer.name+"Fill", (e) => {
-            clickedVillage.value = e.features[0]
+            clickedFeature.value = e.features[0]
             // success
-            if (playState.value == 'playing' && clickedVillage.value.id == guessingVillage.value.id) {
+            if (playState.value == 'playing' && clickedFeature.value.id == guessingFeature.value.id) {
               nbSuccess.value ++;
               playState.value = 'success';
               map.setFeatureState(
-                { source: props.playgroundLayer.name, id: clickedVillage.value.id },
+                { source: props.playgroundLayer.name, id: clickedFeature.value.id },
                 { success: true }
               );
               // game must go on
               if (nbSuccess.value < 10) {
                 window.setTimeout(() => {
                   map.setFeatureState(
-                    { source: props.playgroundLayer.name, id: clickedVillage.value.id },
+                    { source: props.playgroundLayer.name, id: clickedFeature.value.id },
                     { success: false }
                   );
                   play()
@@ -111,7 +133,7 @@ export default defineComponent({
                 playState.value = "finished"
                 window.setTimeout(() => {
                   map.setFeatureState(
-                    { source: props.playgroundLayer.name, id: clickedVillage.value.id },
+                    { source: props.playgroundLayer.name, id: clickedFeature.value.id },
                     { success: false }
                   );
                 }, 2000);
@@ -122,12 +144,12 @@ export default defineComponent({
               nbFail.value ++;
               playState.value = 'failed';
               map.setFeatureState(
-                { source: props.playgroundLayer.name, id: clickedVillage.value.id },
+                { source: props.playgroundLayer.name, id: clickedFeature.value.id },
                 { fail: true }
               );
               window.setTimeout(() => {
                 map.setFeatureState(
-                  { source: props.playgroundLayer.name, id: clickedVillage.value.id },
+                  { source: props.playgroundLayer.name, id: clickedFeature.value.id },
                   { fail: false }
                 );
                 playState.value = 'playing';
@@ -137,13 +159,14 @@ export default defineComponent({
         })
       }
       playState.value = "playing"
-      guessingVillageIndex.value = Math.floor(Math.random() * props.playgroundLayer.features.length);
-      guessingVillage.value = props.playgroundLayer.features[guessingVillageIndex.value];
+      guessingFeatureIndex.value = Math.floor(Math.random() * props.playgroundLayer.features.length);
+      guessingFeature.value = props.playgroundLayer.features[guessingFeatureIndex.value];
     }
       
     return {
-      clickedVillage,
-      guessingVillage,
+      featureFullName,
+      clickedFeature,
+      guessingFeature,
       replay,
       play,
       playState,
