@@ -3,7 +3,9 @@
     v-if="!playing"
     class="game game-selection-portal"
   >
-    <label for="game-selection-playground">PlayGround</label>
+    <h1>LaoGeographyQuiz</h1>
+    <br>
+    <label for="game-selection-playground">Select Playground</label>
     <br>
     <select 
       v-model="playgroundName"
@@ -16,7 +18,7 @@
     </select>
     <br>
     <br>
-    <label for="game-selection-difficulty">Game Difficulty</label>
+    <label for="game-selection-difficulty">Select Game Difficulty</label>
     <br>
     <select 
       v-model="difficulty" 
@@ -29,7 +31,7 @@
     <br>
     <br>
     <button
-      v-if="difficulty && playgroundName"
+      :disabled="!difficulty && !playgroundName"
       @click="initGame()"
     >
       Play!

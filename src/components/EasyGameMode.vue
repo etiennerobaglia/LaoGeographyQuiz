@@ -2,7 +2,7 @@
   <div class="game game-easy-mode">
     --- Easy Mode ---
     <span v-if="bestScore != null"> - Best Score: {{ bestScore }}/{{totalAttemps}}</span><br>
-    <div v-if="playState != 'notPlaying' && playState != 'finished'" class="game-score">
+    <div v-if="playState == 'playing' || playState == 'finished'" class="game-score">
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;🟢 Success: {{ nbSuccess }}&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    <br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;🔴 Failed: &nbsp;&nbsp;&nbsp; {{ nbFail }}&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    <br>
@@ -11,13 +11,13 @@
     <div class="game-instructions">
       <span v-if="playState=='notPlaying'">
         Start game?
-        <button v-if="playState == 'notPlaying'" @click="play">
+        <button @click="play">
           Play!
         </button>
       </span>
       <span v-if="playState=='finished'">
         Start a new game? 
-        <button v-if="playState == 'finished'" @click="replay">
+        <button @click="replay">
           RePlay!
         </button>
       </span>
@@ -53,7 +53,6 @@ export default defineComponent({
   },
   setup(props) {
     let guessingFeature = ref({});
-    let guessingFeatureName = ref('');
     let guessedFeature = ref({})
     let nbFail = ref(0);
     let nbSuccess = ref(0);
@@ -135,27 +134,27 @@ export default defineComponent({
       let previousFeature = guessingFeature.value;
       let newFeatures = props.playgroundLayer.features.sort(() => .5 - Math.random()).slice(0,5)
       let newFeature = newFeatures[Math.floor(Math.random() * newFeatures.length)]
-      if (newFeature.id == previousFeature.id) setRandomFeatures()
+      if (newFeature.id == previousFeature.id)
+        setRandomFeatures()
       else {
-        guessingOptions.value = newFeatures
-        guessingFeature.value = newFeature
+        guessingOptions.value = newFeatures;
+        guessingFeature.value = newFeature;
+        props.mapPromise.then((map)=> { 
+        map.setFeatureState(
+          { source: props.playgroundLayer.name, id: guessingFeature.value.id },
+          { guessing: true }
+        );
+      })
       }
     }
 
     function play() {
       playState.value = "playing"
       setRandomFeatures()
-      props.mapPromise.then((map)=> { 
-        map.setFeatureState(
-          { source: props.playgroundLayer.name, id: guessingFeature.value.id },
-          { guessing: true }
-        );
-      })
     }
 
     return {
       guessingFeature,
-      guessingFeatureName,
       guessedFeature,
       guessingOptions,
       featureFullName,
@@ -167,7 +166,6 @@ export default defineComponent({
       nbFail,
       nbSuccess,
       bestScore,
-      setRandomFeatures
     };
   },
 });
