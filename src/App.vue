@@ -60,19 +60,13 @@ export default {
   padding: .5rem;
 }
 
-.game-hard-mode {
+.game-info {
   left:auto;
   bottom:auto;
   right: 10px;
   top: 10px;
 }
 
-.game-easy-mode {
-  left: 10px;
-  bottom: 10px;
-  right: auto;
-  top: auto;
-}
 
 .guessing-feature {
   color: rgb(165, 60, 184);

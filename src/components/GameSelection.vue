@@ -3,7 +3,8 @@
     v-if="!playing"
     class="game game-selection-portal"
   >
-    <h1>LaoGeographyQuiz</h1>
+    <h1>ບ້ານລາວຢູ່ໃສ</h1>
+    <h1>BanLaoYuSai</h1>
     <br>
     <label for="game-selection-playground">Select Playground</label>
     <br>
@@ -31,7 +32,7 @@
     <br>
     <br>
     <button
-      :disabled="!difficulty && !playgroundName"
+      :disabled="!playgroundName || !difficulty"
       @click="initGame()"
     >
       Play!
@@ -39,14 +40,9 @@
   </div>
 
   
-  <EasyGameMode
-    v-if="difficulty == 'easy' && playing"
-    :mapPromise="mapPromise"
-    :playgroundLayer="playgroundLayer"
-  />
-    
-  <HardGameMode
-    v-if="difficulty == 'hard' && playing"
+  <GameInfo
+    v-if="playing && difficulty && playgroundName"
+    :difficulty="difficulty"
     :mapPromise="mapPromise"
     :playgroundLayer="playgroundLayer"
   />
@@ -55,21 +51,19 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { ref } from "vue";
-import HardGameMode from './HardGameMode.vue';
-import EasyGameMode from './EasyGameMode.vue';
+import { ref, computed } from "vue";
+import GameInfo from './GameInfo.vue';
 
 export default defineComponent({
   props: {
     mapPromise: Object,
   },
   components: {
-    HardGameMode,
-    EasyGameMode,
+    GameInfo,
   },
   setup(props) {
-    let playgroundName = ref("");
-    let difficulty = ref("");
+    const playgroundName = ref("");
+    const difficulty = ref("");
     let playgroundLayer = ref({})
     let playing = ref(false)
     
