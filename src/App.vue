@@ -1,9 +1,36 @@
 <template>
-  <div id="map"></div>
+  <main class="banlaoyusai">
+    
+    <div class="map-container">
+      <div id="map-info"></div>
+      <div id="map"></div>
+    </div>
+
+    <div class="game-container">
+      <div class="game">
   
-  <GameSelection
-    :mapPromise="mapPromise"
-  />
+      <div class="game-title-container">
+        <h1 class="game-title">
+          <span class="game-title-lao">
+            ບ້ານ ລາວ
+            <br>ຢູ່ໃສ
+          </span>
+          <br>
+          <span class="game-title-english">
+            Ban&nbsp;Lao<br>
+            Yu&nbsp;&nbsp;Sai
+          </span>
+        </h1>
+      </div>
+
+      <GameSelection :mapPromise="mapPromise" />
+
+      </div>
+    </div>
+    
+
+  </main>
+  
 </template>
 
 <script>
@@ -49,28 +76,4 @@ export default {
 </script>
 
 <style>
-#map {
-  width: 100%;
-  height: 100%;
-}
-.game {
-  background-color: #2f2f2f;
-  color: white;
-  position: fixed;
-  padding: .5rem;
-}
-
-.game-info {
-  left:auto;
-  bottom:auto;
-  right: 10px;
-  top: 10px;
-}
-
-
-.guessing-feature {
-  color: rgb(165, 60, 184);
-  font-size: 1.05rem;
-  font-weight: 700;
-}
 </style>

@@ -1,51 +1,51 @@
 <template>
-  <div 
-    v-if="!playing"
-    class="game game-selection-portal"
-  >
-    <h1>ບ້ານລາວຢູ່ໃສ</h1>
-    <h1>BanLaoYuSai</h1>
-    <br>
-    <label for="game-selection-playground">Select Playground</label>
-    <br>
-    <select 
-      v-model="playgroundName"
-      name="game-difficulty"
-    >
-      <option disabled value="">- Playground -</option>
-      <option v-for="layer in layers" :value="layer.fileName">
-        {{ layer.fullName }}
-      </option>
-    </select>
-    <br>
-    <br>
-    <label for="game-selection-difficulty">Select Game Difficulty</label>
-    <br>
-    <select 
-      v-model="difficulty" 
-      name="game-difficulty"
-    >
-      <option disabled value="">- Difficulty -</option>
-      <option value="easy">Easy</option>
-      <option value="hard">Hard</option>
-    </select>
-    <br>
-    <br>
-    <button
-      :disabled="!playgroundName || !difficulty"
-      @click="initGame()"
-    >
-      Play!
-    </button>
-  </div>
 
-  
-  <GameInfo
-    v-if="playing && difficulty && playgroundName"
-    :difficulty="difficulty"
-    :mapPromise="mapPromise"
-    :playgroundLayer="playgroundLayer"
-  />
+    <div 
+      class="game-selection-portal"
+      v-if="!playing"
+    >
+      <div class="game-select">
+        <label for="game-selection-playground">Select Playground</label>
+        <select 
+          v-model="playgroundName"
+          name="game-difficulty"
+        >
+          <option disabled value="">- Playground -</option>
+          <option v-for="layer in layers" :value="layer.fileName">
+            {{ layer.fullName }}
+          </option>
+        </select>
+      </div>
+
+      <div class="game-select">
+        <label for="game-selection-difficulty">Select Game Difficulty</label>
+        <select 
+          v-model="difficulty" 
+          name="game-difficulty"
+        >
+          <option disabled value="">- Difficulty -</option>
+          <option value="easy">Easy</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+
+      <button
+        class="button-yellow button-play"
+        :disabled="!playgroundName || !difficulty"
+        @click="initGame()"
+      >
+        Play!
+      </button>
+
+    </div>
+
+    
+    <GameInfo
+      v-if="playing && difficulty && playgroundName"
+      :difficulty="difficulty"
+      :mapPromise="mapPromise"
+      :playgroundLayer="playgroundLayer"
+    />
 
 </template>
 
@@ -118,31 +118,27 @@ export default defineComponent({
             paint: {
               'fill-color': [
                 'case',
-                  ['boolean', ['feature-state', 'guessed'], false],
-                  'black',
                   ['boolean', ['feature-state', 'guessing'], false],
-                  'purple',
+                  '#da4167',
+                  ['boolean', ['feature-state', 'hover'], false],
+                  '#da4167',
                   ['boolean', ['feature-state', 'fail'], false],
-                  'red',
+                  'black',
                   ['boolean', ['feature-state', 'success'], false],
                   'green',
                   'black'
               ],
               'fill-opacity': [
                 'case',
-                ['boolean', ['feature-state', 'guessed'], false],
-                .8,
                 ['boolean', ['feature-state', 'guessing'], false],
-                .8,
-                ['boolean', ['feature-state', 'clicked'], false],
+                1,
+                ['boolean', ['feature-state', 'hover'], false],
                 1,
                 ['boolean', ['feature-state', 'fail'], false],
-                .65,
-                ['boolean', ['feature-state', 'success'], false],
-                .65,
-                ['boolean', ['feature-state', 'hover'], false],
                 .8,
-                0.15
+                ['boolean', ['feature-state', 'success'], false],
+                .8,
+                0.075
               ]
             },
           });
@@ -182,9 +178,4 @@ export default defineComponent({
 </script>
 
 <style>
-.game-selection-portal {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
 </style>

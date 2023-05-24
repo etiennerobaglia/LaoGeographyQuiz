@@ -1,18 +1,20 @@
 <template>
-  <div class="game game-info">
-    --- {{difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}} Mode ---
+  <div class="game-info">
     
-    <span v-if="bestScore != null"> 
-        - Best Score: {{ bestScore }}/{{totalAttemps}}
-    </span>
-    <br>
-    
-    <div class="game-score">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;🟢 Success: {{ nbSuccess }}&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;🔴 Failed: &nbsp;&nbsp;&nbsp; {{ nbFail }}&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-    </div>
+    <Teleport to="#map-info" v-if="playSate != 'notPlaying'">
+      <div class="game-map-data">
+        <div class="game-mode">
+          {{difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}} Mode
+        </div>
+        <div class="game-score">
+          🟢 Success: {{ nbSuccess }}<br>
+          ⚫️ Failed: {{ nbFail }}
+        </div>
+        <span class="game-best-score" v-if="bestScore != null"> 
+          Best Score: {{ bestScore }}/{{totalAttemps}}
+        </span>
+      </div>
+    </Teleport>
 
     <span class="game-instructions">
 
@@ -21,42 +23,65 @@
       </span>
 
       <span v-if="difficulty == 'hard' && playState=='playing'">
-        Guess: <br>&gt;&gt;<span class="guessing-feature" v-html="featureFullName(guessingFeature)"></span>&lt;&lt;
+        <span class="game-instructions-title">Instructions:</span> 
+        Click on this vilage on the map <br>
+        <span class="guessing-feature" v-html="featureFullName(guessingFeature)"></span>
       </span>
-      <span v-if="difficulty == 'easy' && guessingFeature.properties && playState=='playing'">
-        Guess the name of the <span class="guessing-feature">purple feature</span> on the map:<br>
+
+      <span v-if="difficulty == 'easy' && guessingFeature.properties && playState!='finished'">
+        <span class="game-instructions-title">Instructions:</span> Guess the name of the <span class="guessing-feature">red feature</span> on the map:<br>
+        
         <span v-for="option in guessingOptions">
-          <button @click="guess(option)">{{featureFullName(option)}}</button><br>
+          <button
+            class="button-red"
+            :disabled="playState != 'playing'"
+            :class="{
+              'button-green':
+                option.id == guessingFeature.id
+                && option.id == guessedFeature.id
+              ,
+              'button-black':     
+                option.id != guessingFeature.id
+                && option.id == guessedFeature.id
+              ,
+            }"
+            @click="guess(option)"
+          >
+            {{featureFullName(option)}}
+          </button>
         </span>
+
       </span>
     </span>
 
     <span class="game-feedback">
-      
+      <!-- <br>
       <span v-if="difficulty == 'easy' && success==false && playState != 'playing'">
         ❌ Wrong, sorry the response was:<br>
         &gt;&gt; <span v-html="featureFullName(guessingFeature)"></span> &lt;&lt;
-      </span>
+      </span> -->
 
       <span v-if="difficulty == 'hard' && success==false && playState != 'playing'">
         ❌ Wrong, sorry this is:<br>
-        &gt;&gt; <span v-html="featureFullName(guessedFeature)"></span> &lt;&lt;
+        <span v-html="featureFullName(guessedFeature)"></span>
       </span>
       
-      <span v-if="success==true && playState != 'playing'">
+      <span v-if="difficulty == 'hard' && success==true && playState != 'playing'">
         ✅ Success! You found:<br> 
         <span class="guessing-feature" v-html="featureFullName(guessedFeature)"></span>
       </span>
       
       <span v-if="playState == 'next'">
-        <br>Next round:
-        <button @click="play()">
-          Next!
+        <button 
+          @click="play()"
+          class="button-yellow button-next"
+        >
+          Next Round!
         </button>
       </span>
 
       <span v-if="playState=='finished'">
-        <br>[Game finished!] Your score is {{ nbSuccess }}/{{ totalAttemps }}.
+        <br><br>[Game finished!] Your score is {{ nbSuccess }}/{{ totalAttemps }}.
         <br>You can 
         <button @click="replay()">
           RePlay!
@@ -113,7 +138,7 @@ export default defineComponent({
         playState.value = "next";
 
         // success
-        if ( guessedFeature.value.id == guessingFeature.value.id) {
+        if (guessedFeature.value.id == guessingFeature.value.id) {
           nbSuccess.value ++;
           success.value = true;
           
@@ -266,5 +291,8 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style scoped>
+
+
+
 </style>
