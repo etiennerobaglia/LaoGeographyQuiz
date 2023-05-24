@@ -94,8 +94,7 @@ main {
 
 .game button {
   margin-top: 4rem;
-  background-color: var(--yellow);
-  color: var(--red);
+
   border: 4px solid transparent;
   font-size: 1.1rem;
 }
@@ -105,7 +104,7 @@ main {
   cursor: pointer;
 }
 
-.game button:disabled, .game button[disabled] {
+.game button:disabled:not(.button-selection), .game button:not(.button-selection)[disabled] {
   /* filter: grayscale(100%); */
   background-color: lightgrey;
   color: grey;
@@ -114,17 +113,28 @@ main {
 
 .game .button-yellow {
   margin-top: 6rem;
+  background-color: var(--yellow);
+  color: var(--red);
 }
 
-.game-info .button-red {
+.game .button-yellow.button-next {
+  margin-top: 2rem;
+}
+
+.game-info .button-selection {
   margin-top: 1.25rem;
-  background-color: var(--red);
-  color: var(--beige);
   padding: .4rem .5rem;
 }
 
-.game-info .button-red:not(:disabled):hover {
-  border: 4px solid var(--beige);
+.game-info .button-red {
+  background-color: var(--red);
+  color: var(--beige);
+}
+
+.game-info .button-grey {
+  filter: none;
+  background-color: rgb(45, 45, 45);
+  /* color: black; */
 }
 
 .game-info .button-green {
@@ -132,15 +142,19 @@ main {
   background-color: green;
   color: var(--beige);
 }
-.game .game-info .button-black:disabled {
+
+.game-info .button-border-green {
   filter: none;
-  background-color: rgb(21, 21, 21);
-  color: var(--beige);
+  border-color: rgb(4, 153, 4);
+  color: rgb(6, 185, 6);
+  animation: fail-answer 1.5s infinite;
 }
 
-.game-info .button-black {
-  background-color: black;
-  color: var(--beige);
+@keyframes fail-answer {
+  50% {
+    color: grey;
+    border-color: transparent;
+  }
 }
 
 .game .game-title-container {
@@ -156,7 +170,8 @@ main {
 .game .game-title {
   color: var(--blue);
   border-radius: 100vh;
-  font-size: 1.7rem;
+  /* font-size: 1.7rem; */
+  font-size: 2.7vh;
 }
 
 .game .game-title-lao {

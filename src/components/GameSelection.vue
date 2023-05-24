@@ -30,7 +30,7 @@
       </div>
 
       <button
-        class="button-yellow button-play"
+        class="button-yellow"
         :disabled="!playgroundName || !difficulty"
         @click="initGame()"
       >
@@ -71,6 +71,16 @@ export default defineComponent({
     
     let layers = ref([
       {
+        "fileName": "lao-provinces",
+        "fullName":"Lao - Provinces",
+        "bounds": laoBounds
+      },
+      {
+        "fileName": "lao-districts",
+        "fullName":"Lao - Districts",
+        "bounds": laoBounds
+      },
+      {
         "fileName": "vte-pro_and_cap-districts",
         "fullName":"Extended Vientiane - Districts",
         "bounds": [[101.17486890018642, 17.74580310199005], [103.35160930021289, 19.45418532763813]]
@@ -89,16 +99,6 @@ export default defineComponent({
         "fileName": "vte-villages-450",
         "fullName":"Vientiane - Road 450 (250 villages)",
         "bounds": [ [102.40350167471024, 17.784056559755257], [102.87552283140121, 18.12166650874893]]
-      },
-      {
-        "fileName": "lao-provinces",
-        "fullName":"Lao - Provinces",
-        "bounds": laoBounds
-      },
-      {
-        "fileName": "lao-districts",
-        "fullName":"Lao - Districts",
-        "bounds": laoBounds
       }
     ])
 
