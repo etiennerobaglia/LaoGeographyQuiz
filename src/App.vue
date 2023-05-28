@@ -12,8 +12,7 @@
       <div class="game-title-container">
         <h1 class="game-title">
           <span class="game-title-lao">
-            ບ້ານ ລາວ
-            <br>ຢູ່ໃສ
+            ບ້ານ ລາວ ຢູ່ໃສ
           </span>
           <br>
           <span class="game-title-english">
@@ -46,10 +45,6 @@ export default {
   },
   setup() {
     const mapPromise = ref();
-    
-    function randomVillageSelection(source, number) {
-      return source.sort(() => .5 - Math.random()).slice(0,number) 
-    }
     
     onMounted(() => {
       mapboxgl.accessToken = import.meta.env.VITE_VUE_APP_MAPBOX_TOKEN;

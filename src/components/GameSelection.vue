@@ -30,7 +30,7 @@
       </div>
 
       <button
-        class="button-yellow"
+        class="button button-yellow"
         :disabled="!playgroundName || !difficulty"
         @click="initGame()"
       >
@@ -118,14 +118,16 @@ export default defineComponent({
             paint: {
               'fill-color': [
                 'case',
-                  ['boolean', ['feature-state', 'guessing'], false],
-                  '#da4167',
-                  ['boolean', ['feature-state', 'hover'], false],
-                  '#da4167',
                   ['boolean', ['feature-state', 'fail'], false],
-                  'black',
+                  import.meta.env.VITE_red,
                   ['boolean', ['feature-state', 'success'], false],
-                  'green',
+                  import.meta.env.VITE_green,
+                  ['boolean', ['feature-state', 'done'], false],
+                  import.meta.env.VITE_blue,
+                  ['boolean', ['feature-state', 'guessing'], false],
+                  import.meta.env.VITE_yellow,
+                  ['boolean', ['feature-state', 'hover'], false],
+                  import.meta.env.VITE_yellow,
                   'black'
               ],
               'fill-opacity': [
@@ -135,10 +137,12 @@ export default defineComponent({
                 ['boolean', ['feature-state', 'hover'], false],
                 1,
                 ['boolean', ['feature-state', 'fail'], false],
-                .8,
+                .85,
                 ['boolean', ['feature-state', 'success'], false],
-                .8,
-                0.075
+                .85,
+                ['boolean', ['feature-state', 'done'], false],
+                .85,
+                0
               ]
             },
           });
@@ -148,8 +152,8 @@ export default defineComponent({
             source: playgroundLayer.value.name,
             layout: {},
             paint: {
-              'line-color': 'black',
-              'line-width': 1.5
+              'line-color': import.meta.env.VITE_blue,
+              'line-width': 2
             },
           });
 

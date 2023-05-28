@@ -6,9 +6,21 @@
         <div class="game-mode">
           {{difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}} Mode
         </div>
-        <div class="game-score">
-          🟢 Success: {{ nbSuccess }}<br>
-          ⚫️ Failed: {{ nbFail }}
+        <div class="game-scores">
+          <div class="game-score">
+            <span>
+              <span class="green">■</span> 
+              Success
+            </span>
+            <span>{{ nbSuccess }}</span>
+          </div>
+          <div class="game-score">
+            <span>
+              <span class="red">■</span> 
+              Failed
+            </span>
+            <span>{{ nbFail }}</span>
+          </div>
         </div>
         <span class="game-best-score" v-if="bestScore != null"> 
           Best Score: {{ bestScore }}/{{totalAttemps}}
@@ -22,21 +34,56 @@
         [{{ nbSuccess+nbFail }}/{{totalAttemps}}]
       </span>
 
-      <span v-if="difficulty == 'hard' && playState=='playing'">
+      <span v-if="difficulty == 'hard' && guessingFeature.properties && playState!='finished'">
         <span class="game-instructions-title">Instructions:</span> 
-        Click on this vilage on the map <br>
-        <span class="guessing-feature" v-html="featureFullName(guessingFeature)"></span>
+        Find this administrative area by clicking on the map
+        <button
+          :disabled="playState != 'playing'"
+          title="Find me on the map!"
+          class="button button-selection button-not-hoverable"
+          :class="{
+            'button-yellow-blue': 
+              !guessedFeature.id ||
+              (guessingFeature.id != guessedFeature.id)
+            ,
+            'button-green':
+              guessingFeature.id == guessedFeature.id
+            ,
+            'button-red':
+              guessingFeature.id == guessedFeature.id
+            ,
+            'button-border-blue':
+              guessedFeature.id
+              && guessingFeature.id != guessedFeature.id
+            ,
+          }"
+        >
+          {{ featureFullName(guessingFeature) }} 
+        </button>
+        
+        <div
+          v-if="
+            playState == 'next'
+            && guessingFeature.id != guessedFeature.id
+          "
+          disabled=true
+          class="button button-selection button-red"
+        >
+          {{ featureFullName(guessedFeature) }} 
+      </div>
       </span>
 
       <span v-if="difficulty == 'easy' && guessingFeature.properties && playState!='finished'">
-        <span class="game-instructions-title">Instructions:</span> Guess the name of the <span class="guessing-feature">red feature</span> on the map:<br>
+        <span class="game-instructions-title">Instructions:</span> Guess the name of the <span class="guessing-feature">yellow shape</span> on the map:<br>
         
         <span v-for="option in guessingOptions">
           <button
-            :disabled="playState != 'playing'"
-            class="button-selection"
+            :disabled="
+              playState != 'playing'
+            "
+            class="button button-selection"
             :class="{
-              'button-red': 
+              'button-yellow-blue': 
                 !guessedFeature.id ||
                 ( option.id != guessedFeature.id)
               ,
@@ -44,11 +91,11 @@
                 option.id == guessingFeature.id
                 && option.id == guessedFeature.id
               ,
-              'button-grey':
+              'button-red':
                 option.id != guessingFeature.id
                 && option.id == guessedFeature.id
               ,
-              'button-border-green':
+              'button-border-blue':
                 guessedFeature.id
                 && option.id == guessingFeature.id
                 && option.id != guessedFeature.id
@@ -65,37 +112,35 @@
 
     <span class="game-feedback">
 
-      <span v-if="difficulty == 'hard' && success==false && playState != 'playing'">
-        ❌ Wrong, sorry this is:<br>
-        <span v-html="featureFullName(guessedFeature)"></span>
-      </span>
-      
-      <span v-if="difficulty == 'hard' && success==true && playState != 'playing'">
-        ✅ Success! You found:<br> 
-        <span class="guessing-feature" v-html="featureFullName(guessedFeature)"></span>
-      </span>
-      
-      <span>
         <button 
           @click="next()"
           :disabled="playState != 'next'"
-          class="button-yellow button-next"
+          v-if="nbSuccess + nbFail != totalAttemps"
+          class="button button-yellow button-next"
         >
           Next Round!
         </button>
-      </span>
 
-      <span v-if="playState=='finished'">
-        <br><br>[Game finished!] Your score is {{ nbSuccess }}/{{ totalAttemps }}.
-        <br>You can 
+        <button
+          v-else-if="playState != 'finished'"
+          @click="score()"
+          class="button button-yellow button-next"
+        >
+          See score!
+        </button>
+
+      <div class="game-finished" v-if="playState=='finished'">
+        [Game finished!] 
+        <br>
+        Your score is {{ nbSuccess }}/{{ totalAttemps }}.
         <button 
           @click="replay()"
           ref:enterButton
-          class="button-yellow"
+          class="button button-yellow"
         >
           RePlay!
         </button>
-      </span>
+      </div>
 
     </span>
 
@@ -133,22 +178,49 @@ export default defineComponent({
       playState.value = "playing";
     }
 
+    function score() {
+        // end of game
+        playState.value = "finished";
+
+        // set bestscore
+        if (playState.value == "finished" && (nbSuccess.value > bestScore.value || bestScore.value == null))
+          bestScore.value = nbSuccess.value;
+        
+        next()
+    }
+
     function next() {
+
       let newFeatureState;
-      if (props.difficulty == 'hard') newFeatureState = { fail: false }
-      if (props.difficulty == 'easy') newFeatureState = { fail: false, guessing: false }
+      if (props.difficulty == 'hard') 
+        newFeatureState = { fail: false, success: false }
+      if (props.difficulty == 'easy') 
+        newFeatureState = { fail: false, guessing: false, success: false }
+
       props.mapPromise.then((map)=> {
-        map.setFeatureState(
-          { source: props.playgroundLayer.name, id: guessingFeature.value.id },
-          newFeatureState
-        );
         map.setFeatureState(
           { source: props.playgroundLayer.name, id: guessedFeature.value.id },
           newFeatureState
         )
+
+        map.setFeatureState(
+          { source: props.playgroundLayer.name, id: guessingFeature.value.id },
+          newFeatureState
+        );
+
+        if (guessingFeature.value.id == guessedFeature.value.id)
+
+          map.setFeatureState(
+            { source: props.playgroundLayer.name, id: guessingFeature.value.id },
+            { done: true }
+          );
+
         guessingFeature.value = {}
         guessedFeature.value = {}
-        play()
+
+        // game must go on
+        if (playState.value != "finished") play()
+
       })
     }
 
@@ -159,7 +231,7 @@ export default defineComponent({
         map.removeFeatureState(
           {source: props.playgroundLayer.name}
         )
-        next()
+        play()
       })
     }
 
@@ -199,15 +271,6 @@ export default defineComponent({
             newFeatureState
           )
         }
-
-        // end of game
-        if (nbSuccess.value + nbFail.value == totalAttemps.value) {
-            playState.value = "finished";
-        }
-
-        // set bestscore
-        if (playState.value == "finished" && (nbSuccess.value > bestScore.value || bestScore.value == null))
-          bestScore.value = nbSuccess.value;
       })
     }
 
@@ -215,10 +278,13 @@ export default defineComponent({
       let featureFullName;
       if (feature.properties?.vname)
         featureFullName = 
-          feature.properties?.vname + ", "
-          + feature.properties?.dname + " - "
-          + feature.properties?.l_vname + ", "
-          + feature.properties?.l_dname;
+          feature.properties?.vname 
+          // + ", "
+          // + feature.properties?.dname 
+            + " - "
+          + feature.properties?.l_vname 
+          //   + ", "
+          // + feature.properties?.l_dname;
       else if (feature.properties?.dname)
           featureFullName = 
           feature.properties?.dname + " - "
@@ -236,7 +302,7 @@ export default defineComponent({
       let newFeatures;
       
       if (props.difficulty == 'easy') {
-        newFeatures = props.playgroundLayer.features.sort(() => .5 - Math.random()).slice(0,5)
+        newFeatures = props.playgroundLayer.features.sort(() => .5 - Math.random()).slice(0,4)
         newFeature = newFeatures[Math.floor(Math.random() * newFeatures.length)]
       }
 
@@ -319,6 +385,7 @@ export default defineComponent({
       next,
       replay,
       guess,
+      score,
       playState,
       totalAttemps,
       nbFail,

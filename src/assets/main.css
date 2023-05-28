@@ -4,9 +4,9 @@
   --blue: #083d77;
   --beige: #ebebd3;
   --red: #da4167;
-  --red: #da4167;
   --yellow: #f4d35e;
   --coral: #f78764;
+  --green: #2BA84A;
   /* https://coolors.co/083d77-ebebd3-da4167-f4d35e-f78764 */
 }
 
@@ -30,6 +30,14 @@ main {
     "map-container game-container"
 }
 
+.red {
+  color: var(--red)
+}
+
+.green {
+  color: var(--green)
+}
+
 .map-container {
   grid-area: map-container;
 }
@@ -51,6 +59,13 @@ main {
   top: 1rem;
 }
 
+.game-score {
+  display: flex;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+
 .game-container {
   grid-area: game-container;
 }
@@ -63,11 +78,11 @@ main {
   flex-direction: column;
   align-items: center;
 
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 
-.game select, .game button {
+.game select, .game .button {
   color: white;
   border: none;
   padding: 1rem .5rem;
@@ -76,6 +91,7 @@ main {
   width: 100%;
   font-weight: 500;
   text-align: center;
+  -webkit-appearance: none;
 }
 
 .game-select {
@@ -89,26 +105,10 @@ main {
   background-color: var(--red);
 }
 
-.game-select label {
-}
-
-.game button {
+.game .button {
   margin-top: 4rem;
-
   border: 4px solid transparent;
   font-size: 1.1rem;
-}
-
-.game button:not(:disabled):hover {
-  border: 4px solid var(--red);
-  cursor: pointer;
-}
-
-.game button:disabled:not(.button-selection), .game button:not(.button-selection)[disabled] {
-  /* filter: grayscale(100%); */
-  background-color: lightgrey;
-  color: grey;
-  cursor: not-allowed;
 }
 
 .game .button-yellow {
@@ -126,34 +126,65 @@ main {
   padding: .4rem .5rem;
 }
 
+.game-info .button-yellow-blue {
+  border-color: var(--yellow);
+  background-color: var(--yellow);
+  color: var(--blue);
+}
+
+.game .button.button-yellow-blue:not(:disabled):not(.button-not-hoverable):hover {
+  color: var(--yellow);
+  border-color: var(--yellow);
+  background-color: var(--blue);
+  cursor: pointer;
+}
+
 .game-info .button-red {
   background-color: var(--red);
   color: var(--beige);
 }
 
-.game-info .button-grey {
+.game .game-info .game-instructions .button-red,
+.game .game-info .game-instructions .button-green {
   filter: none;
-  background-color: rgb(45, 45, 45);
-  /* color: black; */
 }
+
 
 .game-info .button-green {
   filter: none;
-  background-color: green;
+  background-color: var(--green);
   color: var(--beige);
 }
 
-.game-info .button-border-green {
-  filter: none;
-  border-color: rgb(4, 153, 4);
-  color: rgb(6, 185, 6);
-  animation: fail-answer 1.5s infinite;
+.game-info .button-border-blue {
+  animation: fail-answer 2s infinite;
+}
+
+.game .button:not(:disabled):not(.button-not-hoverable):hover {
+  border: 4px solid var(--red);
+  cursor: pointer;
+}
+
+.game .button:disabled:not(.button-selection), .game .button:not(.button-selection)[disabled] {
+  background-color: lightgrey;
+  color: grey;
+  cursor: not-allowed;
+}
+
+.game .button-selection:disabled,
+.game .button-selection[disabled] {
+  filter: grayscale(60%);
+  cursor: not-allowed;
+}
+
+.game-finished {
+  margin-top: 8vh;
 }
 
 @keyframes fail-answer {
   50% {
-    color: grey;
-    border-color: transparent;
+    background-color: transparent;
+    color: var(--yellow);
   }
 }
 
@@ -164,25 +195,30 @@ main {
 
   width: 20vh;
   height: 20vh;
-  padding: 2vh 4.5vh;
+
+
+  padding: 5vh 1.5vh;
+  text-align: center;
+
 }
 
 .game .game-title {
   color: var(--blue);
   border-radius: 100vh;
   /* font-size: 1.7rem; */
-  font-size: 2.7vh;
+  font-size: 2.8vh;
 }
 
 .game .game-title-lao {
-  font-weight: 900;
+  font-weight: 1000;
 }
 .game .game-title-english {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .game-map-data {
-  padding: 1rem;
+  font-weight: 500;
+  padding: .5rem 1rem;
 }
 
 .game-instructions-title {
@@ -191,7 +227,7 @@ main {
 }
 
 .guessing-feature {
-  color: var(--red);
+  color: var(--yellow);
   font-size: 1.125rem;
   font-weight: 900;
 }
