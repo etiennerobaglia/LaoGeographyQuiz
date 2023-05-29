@@ -50,8 +50,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import { ref, computed } from "vue";
+import { defineComponent, ref } from 'vue';
 import GameInfo from './GameInfo.vue';
 
 export default defineComponent({
@@ -71,21 +70,6 @@ export default defineComponent({
     
     let layers = ref([
       {
-        "fileName": "lao-provinces",
-        "fullName":"Lao - Provinces",
-        "bounds": laoBounds
-      },
-      {
-        "fileName": "lao-districts",
-        "fullName":"Lao - Districts",
-        "bounds": laoBounds
-      },
-      {
-        "fileName": "vte-pro_and_cap-districts",
-        "fullName":"Extended Vientiane - Districts",
-        "bounds": [[101.17486890018642, 17.74580310199005], [103.35160930021289, 19.45418532763813]]
-      },
-      {
         "fileName": "vte-villages-t2",
         "fullName":"Vientiane - City Center (39 villages)",
         "bounds": [[102.57813377330893, 17.927212142550417], [102.64211925985438, 17.98422754876998]],
@@ -99,6 +83,21 @@ export default defineComponent({
         "fileName": "vte-villages-450",
         "fullName":"Vientiane - Road 450 (250 villages)",
         "bounds": [ [102.40350167471024, 17.784056559755257], [102.87552283140121, 18.12166650874893]]
+      },
+      {
+        "fileName": "lao-districts",
+        "fullName":"Lao - Districts",
+        "bounds": laoBounds
+      },
+      {
+        "fileName": "vte-pro_and_cap-districts",
+        "fullName":"Extended Vientiane - Districts",
+        "bounds": [[101.17486890018642, 17.74580310199005], [103.35160930021289, 19.45418532763813]]
+      },
+      {
+        "fileName": "lao-provinces",
+        "fullName":"Lao - Provinces",
+        "bounds": laoBounds
       }
     ])
 

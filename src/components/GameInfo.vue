@@ -22,9 +22,9 @@
             <span>{{ nbFail }}</span>
           </div>
         </div>
-        <span class="game-best-score" v-if="bestScore != null"> 
+        <div class="game-best-score" v-if="bestScore != null"> 
           Best Score: {{ bestScore }}/{{totalAttemps}}
-        </span>
+        </div>
       </div>
     </Teleport>
 
@@ -144,15 +144,19 @@
       </button>
 
       <div class="game-finished" v-if="playState=='finished'">
-        [Game finished!] 
-        <br>
-        Your score is {{ nbSuccess }}/{{ totalAttemps }}.
+        [Game finished] 
+        Congratulation, your score is {{ nbSuccess }}/{{ totalAttemps }}!
         <button 
           @click="replay()"
-          ref:enterButton
           class="button button-yellow"
         >
-          RePlay!
+          Replay this mode!
+        </button>
+        <button 
+          @click="restart()"
+          class="button button-yellow"
+        >
+          Choose new game mode!
         </button>
       </div>
 
@@ -161,8 +165,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted } from 'vue';
-import { ref } from "vue";
+import { defineComponent, ref, onMounted, getCurrentInstance } from 'vue';
 
 
 export default defineComponent({
@@ -240,6 +243,10 @@ export default defineComponent({
         )
         play()
       })
+    }
+
+    function restart() {
+      location.reload();
     }
 
     function guess(guessAttemp) {
@@ -389,6 +396,7 @@ export default defineComponent({
       play,
       next,
       replay,
+      restart,
       guess,
       score,
       playState,
