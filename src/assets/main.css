@@ -13,21 +13,24 @@
 #app {
   height: 100vh;
   width: 100vw;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 main {
   width: 100%;
   height: 100%;
   padding: 2vh;
-  display: grid;
   background: var(--blue);
   justify-content: center;
-  display: grid;
+  
+  display: flex;
+
+  
+  /* display: grid;
   grid-template-columns: 3fr 1fr;
   grid-template-rows: auto;
   grid-template-areas: 
-    "map-container game-container"
+    "map-container game-container" */
 }
 
 .red {
@@ -40,6 +43,8 @@ main {
 
 .map-container {
   grid-area: map-container;
+  width: 85%;
+  min-width: 80%;
 }
 
 
@@ -49,25 +54,19 @@ main {
   height: 100%;
 }
 
-#map-info {
-  position: absolute;
+#game-modal-info {
+  position: fixed;
   z-index: 1;
   background: var(--blue);
   color: var(--beige);
   border-radius: .5rem;
-  right: 1rem;
-  top: 1rem;
+  left: 3vh;
+  top: 3vh;
 }
-
-.game-score {
-  display: flex;
-  justify-content: space-between;
-  gap: .5rem;
-}
-
 
 .game-container {
   grid-area: game-container;
+  /* width: 25%; */
 }
 
 .game {
@@ -81,6 +80,17 @@ main {
   font-size: 1rem;
   font-weight: 500;
 }
+
+.game-score {
+  display: flex;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+
+
+
+
 
 .game select, .game .button {
   color: white;
@@ -101,8 +111,21 @@ main {
 
 .game-select select {
   cursor: pointer;
-  margin-top: .75rem;
+  margin-top: .75vh;
   background-color: var(--red);
+}
+
+.game-buttons {
+  margin-top: 1.25rem;
+
+
+  display: grid;
+  /* justify-content: center; */
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1vw
+  /* grid-template-areas: 
+    "map-container game-container" */
 }
 
 .game .button {
@@ -122,9 +145,12 @@ main {
 }
 
 .game-info .button-selection {
-  margin-top: 1.25rem;
+  margin-top: 0;
+  font-size: 1rem;
+  height: auto;
   padding: .4rem .5rem;
 }
+
 
 .game-info .button-yellow-blue {
   border-color: var(--yellow);
@@ -144,12 +170,6 @@ main {
   color: var(--beige);
 }
 
-.game .game-info .game-instructions .button-red,
-.game .game-info .game-instructions .button-green {
-  filter: none;
-}
-
-
 .game-info .button-green {
   filter: none;
   background-color: var(--green);
@@ -160,26 +180,34 @@ main {
   animation: fail-answer 2s infinite;
 }
 
+.game .game-info .button-selection.button-not-hoverable{
+  margin-top: 4vh;
+  font-size: 1.2rem;
+}
+
 .game .button:not(:disabled):not(.button-not-hoverable):hover {
   border: 4px solid var(--red);
   cursor: pointer;
 }
 
 .game .button:disabled:not(.button-selection), .game .button:not(.button-selection)[disabled] {
-  background-color: lightgrey;
+  background-color: var(--beige);
   color: grey;
   cursor: not-allowed;
+  /* filter: grayscale(70%); */
 }
 
 .game .button-selection:disabled,
 .game .button-selection[disabled] {
-  filter: grayscale(60%);
+  filter: grayscale(45%);
   cursor: not-allowed;
 }
 
 .game-finished {
   margin-top: 8vh;
 }
+
+.game-feedback {width: 100%;}
 
 @keyframes fail-answer {
   50% {
@@ -191,13 +219,13 @@ main {
 .game .game-title-container {
   background-color: var(--beige);
   border-radius: 100vh;
-  margin-bottom: 3vh;
+  margin: 2vh 0 5vh;
 
   width: 20vh;
   height: 20vh;
 
 
-  padding: 5vh 1.5vh;
+  padding-top: .5vh;
   text-align: center;
 
 }
@@ -205,30 +233,30 @@ main {
 .game .game-title {
   color: var(--blue);
   border-radius: 100vh;
-  /* font-size: 1.7rem; */
   font-size: 2.8vh;
 }
 
 .game .game-title-lao {
   font-weight: 1000;
+  font-size: 110%;
 }
 .game .game-title-english {
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 100%;
 }
 
-.game-map-data {
+.game-data {
   font-weight: 500;
   padding: .5rem 1rem;
 }
 
-.game-instructions-title {
-  font-weight: 700;
-  font-size: 1.125rem;
+.game-instructions {
+  font-size: 1.025rem;
 }
 
 .guessing-feature {
   color: var(--yellow);
-  font-size: 1.125rem;
+  font-size: 1.05rem;
   font-weight: 900;
 }
 
@@ -236,4 +264,139 @@ main {
   text-align: center;
   font-weight: 600;
   padding-bottom: .25rem;
+}
+
+.game-difficulty {
+  display: inline;
+}
+
+.game-finished {
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.title-container {
+  display: none;
+}
+
+@media screen and (max-width: 769px) {
+  main {
+    width: 100%;
+    height: 100%;
+    padding: 2vh;
+    background: var(--blue);
+    justify-content: center;
+    display: block;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    grid-template-areas: 
+      "map-container"
+      "game-container"
+  }
+  .map-container {
+    width: 100%;
+    height: 60%;
+  }
+
+  .game .game-title-container {
+    display: none;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2vh;
+  }
+
+  #game-modal-info {
+    position: unset;
+    z-index: 1;
+    background: none;
+    color: var(--beige);
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .game-info {
+    width: 100%;
+  }
+
+  .game-instructions, .game-buttons {
+    margin: 0;
+  }
+
+  .game .button-yellow.button-next {
+    margin-top: 1vh;
+  }
+
+  .game-instruction-text {
+   display: none; 
+  }
+
+  .game-selection-portal {
+    width: 100%;
+  }
+
+  .game-data {
+    padding: 0;
+    display: flex;
+  }
+
+  .game-mode {
+    display: none;
+  }
+  .title-container {
+    display: flex;
+  }
+
+  .title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .title-text {
+    color: white;
+    font-weight: 600;
+    font-size: 2.5vh;
+  }
+
+  .title-logo {
+    background-color: var(--beige);
+    border-radius: 100%;
+    width: 6vh;
+    height: 6vh;
+    margin-right: 2vh;
+  }
+
+  .game {
+    padding: 0;
+  }
+  
+  .game .game-buttons {
+    margin: 2vh 0 1vh;
+  }
+
+
+  .game select, .game .button {
+    padding: 1.75vh;
+  }
+
+  .game .button-selection {
+    padding: .75vh;
+  }
+
+  .game .button-yellow {
+    margin-top: 2vh;
+  }
+
+  .game-select {
+    margin-top: 1vh;
+  }
+
+  .game-select label {
+    display: none;
+  }
+
 }

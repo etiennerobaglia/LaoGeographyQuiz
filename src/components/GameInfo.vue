@@ -1,8 +1,8 @@
 <template>
   <div class="game-info">
 
-    <Teleport to="#map-info" v-if="playState != 'notPlaying'">
-      <div class="game-map-data">
+    <Teleport to="#game-modal-info" v-if="playState != 'notPlaying'">
+      <div class="game-data">
         <div class="game-mode">
           {{difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}} Mode
         </div>
@@ -28,15 +28,23 @@
       </div>
     </Teleport>
 
-    <span class="game-instructions">
+    <div class="game-instructions">
 
-      <span v-if="playState!='finished'">
+      <span class="game-instruction-text" v-if="playState!='finished'">
         [{{ nbSuccess+nbFail }}/{{totalAttemps}}]
       </span>
 
-      <span v-if="difficulty == 'hard' && guessingFeature.properties && playState!='finished'">
-        <span class="game-instructions-title">Instructions:</span> 
-        Find this administrative area by clicking on the map
+      <div 
+        class="game-difficulty game-difficulty-hard" 
+        v-if="difficulty == 'hard' && guessingFeature.properties && playState!='finished'"
+      >
+
+        <span class="game-instruction-text">
+          Instructions: Find 
+          <span class="guessing-feature">this administrative</span>
+          area by clicking on the map
+        </span>
+
         <button
           :disabled="playState != 'playing'"
           title="Find me on the map!"
@@ -55,32 +63,38 @@
             'button-border-blue':
               guessedFeature.id
               && guessingFeature.id != guessedFeature.id
-            ,
           }"
         >
           {{ featureFullName(guessingFeature) }} 
         </button>
         
-        <div
+        <button
           v-if="
             playState == 'next'
             && guessingFeature.id != guessedFeature.id
           "
           disabled=true
-          class="button button-selection button-red"
+          class="button button-selection button-not-hoverable button-red"
         >
           {{ featureFullName(guessedFeature) }} 
-      </div>
-      </span>
+        </button>
 
-      <span v-if="difficulty == 'easy' && guessingFeature.properties && playState!='finished'">
-        <span class="game-instructions-title">Instructions:</span> Guess the name of the <span class="guessing-feature">yellow shape</span> on the map:<br>
+      </div>
+
+      <div class="game-difficulty game-difficulty-easy" v-if="difficulty == 'easy' && guessingFeature.properties && playState!='finished'">
         
-        <span v-for="option in guessingOptions">
+        <span class="game-instruction-text">
+          Instructions: Guess the name of the 
+          <span class="guessing-feature">yellow shape</span>
+          on the map
+        </span>
+        
+        <div class="game-buttons">
           <button
             :disabled="
               playState != 'playing'
             "
+            v-for="option in guessingOptions"
             class="button button-selection"
             :class="{
               'button-yellow-blue': 
@@ -105,29 +119,29 @@
           >
             {{featureFullName(option)}}
           </button>
-        </span>
+        
+        </div>
+      </div>
+    </div>
 
-      </span>
-    </span>
+    <div class="game-feedback">
 
-    <span class="game-feedback">
+      <button 
+        @click="next()"
+        :disabled="playState != 'next'"
+        v-if="nbSuccess + nbFail != totalAttemps"
+        class="button button-yellow button-next"
+      >
+        Next Round!
+      </button>
 
-        <button 
-          @click="next()"
-          :disabled="playState != 'next'"
-          v-if="nbSuccess + nbFail != totalAttemps"
-          class="button button-yellow button-next"
-        >
-          Next Round!
-        </button>
-
-        <button
-          v-else-if="playState != 'finished'"
-          @click="score()"
-          class="button button-yellow button-next"
-        >
-          See score!
-        </button>
+      <button
+        v-else-if="playState != 'finished'"
+        @click="score()"
+        class="button button-yellow button-next"
+      >
+        See score!
+      </button>
 
       <div class="game-finished" v-if="playState=='finished'">
         [Game finished!] 
@@ -142,8 +156,7 @@
         </button>
       </div>
 
-    </span>
-
+    </div>
   </div>
 </template>
 
@@ -191,29 +204,23 @@ export default defineComponent({
 
     function next() {
 
-      let newFeatureState;
-      if (props.difficulty == 'hard') 
-        newFeatureState = { fail: false, success: false }
-      if (props.difficulty == 'easy') 
-        newFeatureState = { fail: false, guessing: false, success: false }
-
       props.mapPromise.then((map)=> {
         map.setFeatureState(
           { source: props.playgroundLayer.name, id: guessedFeature.value.id },
-          newFeatureState
+          { fail: false, guessing: false, success: false }
         )
 
         map.setFeatureState(
           { source: props.playgroundLayer.name, id: guessingFeature.value.id },
-          newFeatureState
+          { fail: false, guessing: false, success: false }
         );
 
-        if (guessingFeature.value.id == guessedFeature.value.id)
-
+        if (guessingFeature.value.id == guessedFeature.value.id) {
           map.setFeatureState(
             { source: props.playgroundLayer.name, id: guessingFeature.value.id },
             { done: true }
           );
+        }
 
         guessingFeature.value = {}
         guessedFeature.value = {}
@@ -247,13 +254,9 @@ export default defineComponent({
           nbSuccess.value ++;
           success.value = true;
           
-          let newFeatureState;
-          if (props.difficulty == 'hard') newFeatureState = { success: true }
-          if (props.difficulty == 'easy') newFeatureState = { guessing: false, success: true }
-          
           map.setFeatureState(
             { source: props.playgroundLayer.name, id: guessingFeature.value.id },
-            newFeatureState
+            { guessing: false, success: true }
           );
         }
 
@@ -262,13 +265,13 @@ export default defineComponent({
           nbFail.value ++;
           success.value = false;
 
-          let newFeatureState;
-          if (props.difficulty == 'hard') newFeatureState = { fail: true }
-          if (props.difficulty == 'easy') newFeatureState = { fail: true }
-
           map.setFeatureState(
             { source: props.playgroundLayer.name, id: guessedFeature.value.id },
-            newFeatureState
+            { fail: true }
+          )
+          map.setFeatureState(
+            { source: props.playgroundLayer.name, id: guessingFeature.value.id },
+            { guessing: true }
           )
         }
       })
@@ -338,13 +341,13 @@ export default defineComponent({
       props.mapPromise.then((map)=> { 
         // hover feature color
         map.on('mousemove', props.playgroundLayer.name+"Fill", (e) => {
-          if (e.features.length > 0 && hoveredFeatureId !== null) {
+          if (e.features.length > 0 && hoveredFeatureId !== null && playState.value == 'playing') {
             map.setFeatureState(
               { source: props.playgroundLayer.name, id: hoveredFeatureId },
               { hover: false }
             );
           }
-          if (e.features.length > 0) {
+          if (e.features.length > 0 && playState.value == 'playing') {
             map.getCanvas().style.cursor = 'pointer'
             hoveredFeatureId = e.features[0].id;
             map.setFeatureState(
@@ -352,10 +355,12 @@ export default defineComponent({
               { hover: true }
             );
           }
+          if (e.features.length > 0 && playState.value != 'playing')
+            map.getCanvas().style.cursor = 'not-allowed'
         });
         map.on('mouseleave', props.playgroundLayer.name+"Fill", () => {
-          if (hoveredFeatureId !== null) {
-            map.getCanvas().style.cursor = ''
+          map.getCanvas().style.cursor = ''
+          if (hoveredFeatureId !== null && playState.value == 'playing') {
             map.setFeatureState(
               { source: props.playgroundLayer.name, id: hoveredFeatureId },
               { hover: false }
