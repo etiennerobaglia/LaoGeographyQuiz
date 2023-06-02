@@ -165,13 +165,14 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, getCurrentInstance } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 
 
 export default defineComponent({
   props: {
     mapPromise: Object,
     playgroundLayer: Object,
+    playgroundInfo: Object,
     difficulty: String,
   },
   setup(props) {
@@ -227,6 +228,11 @@ export default defineComponent({
 
         guessingFeature.value = {}
         guessedFeature.value = {}
+
+        map.fitBounds(
+          props.playgroundInfo.bounds,
+          {padding: 20}
+        )
 
         // game must go on
         if (playState.value != "finished") play()
@@ -288,21 +294,13 @@ export default defineComponent({
       let featureFullName;
       if (feature.properties?.vname)
         featureFullName = 
-          feature.properties?.vname 
-          // + ", "
-          // + feature.properties?.dname 
-            + " - "
-          + feature.properties?.l_vname 
-          //   + ", "
-          // + feature.properties?.l_dname;
+          feature.properties?.vname + " - " + feature.properties?.l_vname 
       else if (feature.properties?.dname)
           featureFullName = 
-          feature.properties?.dname + " - "
-          + feature.properties?.l_dname
+          feature.properties?.dname + " - " + feature.properties?.l_dname
       else if (feature.properties?.pname)
         featureFullName = 
-          feature.properties?.pname + " - "
-          + feature.properties?.l_pname;
+          feature.properties?.pname + " - " + feature.properties?.l_pname;
       return featureFullName
     }
 
@@ -310,37 +308,31 @@ export default defineComponent({
       let previousFeature = guessingFeature.value;
       let newFeature;
       let newFeatures;
-      
-      if (props.difficulty == 'easy') {
-        newFeatures = props.playgroundLayer.features.sort(() => .5 - Math.random()).slice(0,4)
-        newFeature = newFeatures[Math.floor(Math.random() * newFeatures.length)]
-      }
-
-      if (props.difficulty == 'hard') {
-        newFeature = props.playgroundLayer.features[Math.floor(Math.random() * props.playgroundLayer.features.length)];
-      }
-
-      if (
-        newFeature.id == previousFeature.id
-        || gameDoneFeaturesIDs.value.includes(newFeature.id)
-      )
-        setRandomFeatures()
-
-      else if (props.difficulty == 'easy') {
-        guessingOptions.value = newFeatures;
-        guessingFeature.value = newFeature;
-        props.mapPromise.then((map)=> { 
+    
+      props.mapPromise.then((map)=> { 
+        if (props.difficulty == 'easy') {
+          newFeatures = props.playgroundLayer.features.sort(() => .5 - Math.random()).slice(0,4)
+          newFeature = newFeatures[Math.floor(Math.random() * newFeatures.length)]
+        }
+        if (props.difficulty == 'hard') {
+          newFeature = props.playgroundLayer.features[Math.floor(Math.random() * props.playgroundLayer.features.length)];
+        }
+        if (
+          newFeature.id == previousFeature.id
+          || gameDoneFeaturesIDs.value.includes(newFeature.id)
+        ) setRandomFeatures()
+        else if (props.difficulty == 'easy') {
+          guessingOptions.value = newFeatures;
+          guessingFeature.value = newFeature;
           map.setFeatureState(
             { source: props.playgroundLayer.name, id: guessingFeature.value.id },
             { guessing: true }
           );
-        })
-      }
-
-      else if (props.difficulty == 'hard')
-        guessingFeature.value = newFeature;
-      
-      gameDoneFeaturesIDs.value.push(newFeature.id)
+        }
+        else if (props.difficulty == 'hard') 
+          guessingFeature.value = newFeature;
+        gameDoneFeaturesIDs.value.push(newFeature.id)
+      })
     }
 
     // hard mode map listeners

@@ -5,20 +5,20 @@
       v-if="!playing"
     >
       <div class="game-select">
-        <label for="game-selection-playground">Select Playground</label>
+        <label class="game-selection-playground">Select Playground</label>
         <select 
           v-model="playgroundName"
           name="game-difficulty"
         >
           <option disabled value="">- Playground -</option>
-          <option v-for="layer in layers" :value="layer.fileName">
+          <option v-for="layer in layersInfo" :value="layer.fileName">
             {{ layer.fullName }}
           </option>
         </select>
       </div>
 
       <div class="game-select">
-        <label for="game-selection-difficulty">Select Game Difficulty</label>
+        <label class="game-selection-difficulty">Select Game Difficulty</label>
         <select 
           v-model="difficulty" 
           name="game-difficulty"
@@ -45,6 +45,7 @@
       :difficulty="difficulty"
       :mapPromise="mapPromise"
       :playgroundLayer="playgroundLayer"
+      :playgroundInfo="playgroundInfo"
     />
 
 </template>
@@ -62,13 +63,12 @@ export default defineComponent({
   },
   setup(props) {
     const playgroundName = ref("");
+    let playgroundInfo = ref({})
     const difficulty = ref("");
     let playgroundLayer = ref({})
     let playing = ref(false)
-    
     let laoBounds = [[99.6585338255183, 13.7970728629234], [108.3101822387705, 22.83759711581436]];
-    
-    let layers = ref([
+    let layersInfo = ref([
       {
         "fileName": "vte-villages-t2",
         "fullName":"Vientiane - City Center (39 villages)",
@@ -104,6 +104,11 @@ export default defineComponent({
     function initGame() {
       import(`../assets/layers/${playgroundName.value}.json`).then((importLayer) => {
         playgroundLayer.value = importLayer;
+        
+        playgroundInfo.value = layersInfo.value.find(
+          layer => layer.fileName == playgroundName.value
+        ),
+        
         props.mapPromise.then((map) => {
           map.addSource(playgroundLayer.value.name, {
             type: "geojson",
@@ -145,6 +150,7 @@ export default defineComponent({
               ]
             },
           });
+
           map.addLayer({
             id: playgroundLayer.value.name+"Line",
             type: "line",
@@ -157,21 +163,19 @@ export default defineComponent({
           });
 
           map.fitBounds(
-            layers.value.find(
-              layer => layer.fileName == playgroundName.value
-              ).bounds,
+            playgroundInfo.value.bounds,
             {padding: 20}
-          );
-
+          )
         })
         playing.value = true;
       });
     }
 
     return {
-      layers,
+      layersInfo,
       initGame,
       playgroundName,
+      playgroundInfo,
       playgroundLayer,
       difficulty,
       playing,
