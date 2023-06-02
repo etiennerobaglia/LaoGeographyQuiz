@@ -1,5 +1,9 @@
 @import './base.css';
 
+/* --------------------- */
+/* ----- VARIABLES ----- */
+/* --------------------- */
+
 :root {
   --blue: #083d77;
   --beige: #ebebd3;
@@ -9,40 +13,59 @@
   --green: #2BA84A;
   /* https://coolors.co/083d77-ebebd3-da4167-f4d35e-f78764 */
 }
+.blue { color: var(--blue) }
+.beige { color: var(--beige) }
+.red { color: var(--red) }
+.yellow { color: var(--beige) }
+.coral { color: var(--beige) }
+.green { color: var(--green )}
+
+body {
+  background-color: var(--blue);
+}
+
+/* --------------------- */
+/* -------- APP -------- */
+/* --------------------- */
 
 #app {
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
+  position: fixed;
 }
 
 main {
   width: 100%;
   height: 100%;
   padding: 2vh;
-  background: var(--blue);
   justify-content: center;
   display: flex;
+  max-width: 1500px;
+  margin: 0 auto;
 }
 
-.red {
-  color: var(--red)
-}
-
-.green {
-  color: var(--green)
-}
+/* --------------------- */
+/* -------- MAP -------- */
+/* --------------------- */
 
 .map-container {
   width: 100%;
+  border-radius: .75rem;
 }
 
+#map, .mapboxgl-canary, .mapboxgl-canvas-container, .mapboxgl-canvas {
+  border-radius: inherit;
+}
 
 #map {
-  border-radius: .75rem;
   width: 100%;
   height: 100%;
 }
+
+/* --------------------- */
+/* ------- GAME -------- */
+/* --------------------- */
 
 #game-modal-info {
   position: fixed;
@@ -66,7 +89,6 @@ main {
   align-items: center;
   flex-direction: column;
   align-items: center;
-
   font-size: 1rem;
   font-weight: 500;
 }
@@ -77,10 +99,71 @@ main {
   gap: .5rem;
 }
 
+.game-finished {
+  margin-top: 8vh;
+}
 
+.game-feedback {width: 100%;}
 
+.game .game-title-container {
+  background-color: var(--beige);
+  border-radius: 100vh;
+  margin: 2vh 0 5vh;
+  width: 20vh;
+  height: 20vh;
+  padding-top: .5vh;
+  text-align: center;
 
+}
 
+.game .game-title {
+  color: var(--blue);
+  border-radius: 100vh;
+  font-size: 2.8vh;
+}
+
+.game .game-title-lao {
+  font-weight: 1000;
+  font-size: 110%;
+}
+.game .game-title-english {
+  font-weight: 600;
+  font-size: 100%;
+}
+
+.game-data {
+  font-weight: 500;
+  padding: .5rem 1rem;
+}
+
+.guessing-feature {
+  color: var(--yellow);
+  font-weight: 900;
+}
+
+.game-mode {
+  text-align: center;
+  font-weight: 600;
+  padding-bottom: .25rem;
+}
+
+.game-difficulty {
+  display: inline;
+}
+
+.game-finished {
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.title-container {
+  display: none;
+}
+
+/* --------------------- */
+/* ------- GAME -------- */
+/* -- SELECTS/BUTTONS -- */
+/* --------------------- */
 
 .game select, .game .button {
   color: white;
@@ -166,6 +249,13 @@ main {
   animation: fail-answer 2s infinite;
 }
 
+@keyframes fail-answer {
+  50% {
+    background-color: transparent;
+    color: var(--yellow);
+  }
+}
+
 .game .game-info .button-selection.button-not-hoverable{
   margin-top: 4vh;
   font-size: 1.2rem;
@@ -180,7 +270,6 @@ main {
   background-color: var(--beige);
   color: grey;
   cursor: not-allowed;
-  /* filter: grayscale(70%); */
 }
 
 .game .button-selection:disabled,
@@ -189,78 +278,18 @@ main {
   cursor: not-allowed;
 }
 
-.game-finished {
-  margin-top: 8vh;
-}
-
-.game-feedback {width: 100%;}
-
-@keyframes fail-answer {
-  50% {
-    background-color: transparent;
-    color: var(--yellow);
-  }
-}
-
-.game .game-title-container {
-  background-color: var(--beige);
-  border-radius: 100vh;
-  margin: 2vh 0 5vh;
-
-  width: 20vh;
-  height: 20vh;
-
-
-  padding-top: .5vh;
-  text-align: center;
-
-}
-
-.game .game-title {
-  color: var(--blue);
-  border-radius: 100vh;
-  font-size: 2.8vh;
-}
-
-.game .game-title-lao {
-  font-weight: 1000;
-  font-size: 110%;
-}
-.game .game-title-english {
-  font-weight: 600;
-  font-size: 100%;
-}
-
-.game-data {
-  font-weight: 500;
-  padding: .5rem 1rem;
-}
-
-.guessing-feature {
-  color: var(--yellow);
-  font-weight: 900;
-}
-
-.game-mode {
-  text-align: center;
-  font-weight: 600;
-  padding-bottom: .25rem;
-}
-
-.game-difficulty {
-  display: inline;
-}
-
-.game-finished {
-  font-size: 1.15rem;
-  font-weight: 500;
-}
-
-.title-container {
-  display: none;
-}
+/* --------------------- */
+/* ------ MOBILE ------- */
+/* --------------------- */
 
 @media screen and (max-width: 769px) {
+
+
+  /* --------------------- */
+  /* ------ MOBILE ------- */
+  /* ------- APP --------- */
+  /* --------------------- */
+
   main {
     width: 100%;
     height: 100%;
@@ -286,6 +315,11 @@ main {
     align-items: center;
     margin-bottom: 2vh;
   }
+
+  /* --------------------- */
+  /* ------ MOBILE ------- */
+  /* ------- GAME -------- */
+  /* --------------------- */
 
   .game-container {
     width: 100%;
@@ -341,7 +375,7 @@ main {
   }
 
   .title-text {
-    color: white;
+    color: var(--beige);
     font-weight: 600;
     font-size: 2.5vh;
   }
