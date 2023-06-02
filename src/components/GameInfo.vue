@@ -1,20 +1,17 @@
 <template>
-  <div class="game-info">
+  <div class="game-menu-info">
 
-    <Teleport to="#game-modal-info" v-if="playState != 'notPlaying'">
-      <div class="game-data">
-        <div class="game-mode">
-          {{difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}} Mode
-        </div>
-        <div class="game-scores">
-          <div class="game-score">
+    <Teleport to="#game-modal" v-if="playState != 'notPlaying'">
+      <div class="game-modal-inner">
+        <div class="game-menu-scores">
+          <div class="game-menu-score">
             <span>
               <span class="green">■</span> 
               Success
             </span>
             <span>{{ nbSuccess }}</span>
           </div>
-          <div class="game-score">
+          <div class="game-menu-score">
             <span>
               <span class="red">■</span> 
               Failed
@@ -22,28 +19,31 @@
             <span>{{ nbFail }}</span>
           </div>
         </div>
-        <div class="game-best-score" v-if="bestScore != null"> 
+        <div class="game-menu-best-score" v-if="bestScore != null"> 
           Best Score: {{ bestScore }}/{{totalAttemps}}
         </div>
       </div>
     </Teleport>
 
-    <div class="game-instructions">
+    <div 
+      class="game-menu-instructions"
+      v-if="playState != 'finished' && playState != 'notPlaying'"
+    >
 
-      <span class="game-instruction-text" v-if="playState!='finished'">
-        [{{ nbSuccess+nbFail }}/{{totalAttemps}}]
-      </span>
+      <!-- <span class="game-menu-instruction-text" v-if="playState!='finished'">
+        
+      </span> -->
 
       <div 
-        class="game-difficulty game-difficulty-hard" 
+        class="game-menu-difficulty game-difficulty-hard" 
         v-if="difficulty == 'hard' && guessingFeature.properties && playState!='finished'"
       >
 
-        <span class="game-instruction-text">
-          Instructions: Find 
-          <span class="guessing-feature">this administrative</span>
-          area by clicking on the map
-        </span>
+        <div class="game-menu-instruction-text">
+          Find 
+          <span class="guessing-feature">this area</span>
+          on the map:
+        </div>
 
         <button
           :disabled="playState != 'playing'"
@@ -64,8 +64,8 @@
               guessedFeature.id
               && guessingFeature.id != guessedFeature.id
           }"
+          v-html="featureFullName(guessingFeature)"
         >
-          {{ featureFullName(guessingFeature) }} 
         </button>
         
         <button
@@ -75,21 +75,21 @@
           "
           disabled=true
           class="button button-selection button-not-hoverable button-red"
+          v-html="featureFullName(guessedFeature)"
+        
         >
-          {{ featureFullName(guessedFeature) }} 
         </button>
 
       </div>
 
-      <div class="game-difficulty game-difficulty-easy" v-if="difficulty == 'easy' && guessingFeature.properties && playState!='finished'">
+      <div class="game-menu-difficulty game-difficulty-easy" v-if="difficulty == 'easy' && guessingFeature.properties && playState!='finished'">
         
-        <span class="game-instruction-text">
-          Instructions: Guess the name of the 
-          <span class="guessing-feature">yellow shape</span>
-          on the map
-        </span>
+        <div class="game-menu-instruction-text">
+          Find the
+          <span class="guessing-feature">yellow shape</span>:
+        </div>
         
-        <div class="game-buttons">
+        <div class="game-menu-buttons">
           <button
             :disabled="
               playState != 'playing'
@@ -109,22 +109,22 @@
                 option.id != guessingFeature.id
                 && option.id == guessedFeature.id
               ,
-              'button-border-blue':
+              'button-border-green':
                 guessedFeature.id
                 && option.id == guessingFeature.id
                 && option.id != guessedFeature.id
               ,
             }"
             @click="guess(option)"
+            v-html="featureFullName(option)"
           >
-            {{featureFullName(option)}}
           </button>
         
         </div>
       </div>
     </div>
 
-    <div class="game-feedback">
+    <div class="game-menu-feedback">
 
       <button 
         @click="next()"
@@ -132,7 +132,7 @@
         v-if="nbSuccess + nbFail != totalAttemps"
         class="button button-yellow button-next"
       >
-        Next Round!
+      [{{ nbSuccess+nbFail }}/{{totalAttemps}}] Next Round!
       </button>
 
       <button
@@ -140,11 +140,10 @@
         @click="score()"
         class="button button-yellow button-next"
       >
-        See score!
+        [{{ nbSuccess+nbFail }}/{{totalAttemps}}] See score!
       </button>
 
-      <div class="game-finished" v-if="playState=='finished'">
-        [Game finished] 
+      <div class="game-menu-finished" v-if="playState=='finished'">
         Congratulation, your score is {{ nbSuccess }}/{{ totalAttemps }}!
         <button 
           @click="replay()"
@@ -231,7 +230,7 @@ export default defineComponent({
 
         map.fitBounds(
           props.playgroundInfo.bounds,
-          {padding: 20}
+          {padding: 0}
         )
 
         // game must go on
@@ -294,13 +293,13 @@ export default defineComponent({
       let featureFullName;
       if (feature.properties?.vname)
         featureFullName = 
-          feature.properties?.vname + " - " + feature.properties?.l_vname 
+          feature.properties?.vname + " <br /> " + feature.properties?.l_vname 
       else if (feature.properties?.dname)
           featureFullName = 
-          feature.properties?.dname + " - " + feature.properties?.l_dname
+          feature.properties?.dname + " <br /> " + feature.properties?.l_dname
       else if (feature.properties?.pname)
         featureFullName = 
-          feature.properties?.pname + " - " + feature.properties?.l_pname;
+          feature.properties?.pname + " <br /> " + feature.properties?.l_pname;
       return featureFullName
     }
 

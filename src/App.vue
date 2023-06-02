@@ -1,43 +1,27 @@
 <template>
-  <main class="banlaoyusai">
+  <main class="game">
     
-    <div class="header">
-
-      <div class="title-container">
-        <div class="title-logo"></div>
-        <div class="title-text">ບ້ານ ລາວ ຢູ່ໃສ<br>Ban Lao Yu Sai</div>
-      </div>
-
-      <div id="game-modal-info"></div>
-      
-    </div>
-    
-
     <div class="map-container">
       <div id="map"></div>
     </div>
 
-    <div class="game-container">
-      <div class="game">
-
-        <div class="game-title-container">
-          <h1 class="game-title">
-            <span class="game-title-lao">
-              ບ້ານ<br>ລາວ ຢູ່ໃສ
-            </span>
-            <br>
-            <span class="game-title-english">
-              Ban&nbsp;Lao<br>
-              Yu&nbsp;&nbsp;Sai
-            </span>
-          </h1>
-        </div>
-
-        <GameSelection :mapPromise="mapPromise" />
-
+    <div class="header">
+      <div class="title-container">
+        <div class="title-logo"></div>
+        <div class="title-text">ບ້ານ ລາວ ຢູ່ໃສ<br>Ban Lao Yu Sai</div>
       </div>
+      
     </div>
     
+    <div id="game-modal"></div>
+
+    <div class="game-menu-container">
+      <div class="game-menu">
+
+        <GameSelection :mapPromise="mapPromise" />
+      
+      </div>
+    </div>
 
   </main>
   

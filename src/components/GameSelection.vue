@@ -1,14 +1,14 @@
 <template>
 
     <div 
-      class="game-selection-portal"
+      class="game-menu-selection-portal"
       v-if="!playing"
     >
-      <div class="game-select">
-        <label class="game-selection-playground">Select Playground</label>
+      <div class="game-menu-select">
+        <label class="game-menu-selection-playground">Select Playground</label>
         <select 
           v-model="playgroundName"
-          name="game-difficulty"
+          name="game-menu-difficulty"
         >
           <option disabled value="">- Playground -</option>
           <option v-for="layer in layersInfo" :value="layer.fileName">
@@ -17,11 +17,11 @@
         </select>
       </div>
 
-      <div class="game-select">
-        <label class="game-selection-difficulty">Select Game Difficulty</label>
+      <div class="game-menu-select">
+        <label class="game-menu-selection-difficulty">Select Game Difficulty</label>
         <select 
           v-model="difficulty" 
-          name="game-difficulty"
+          name="game-menu-difficulty"
         >
           <option disabled value="">- Difficulty -</option>
           <option value="easy">Easy</option>
