@@ -30,10 +30,6 @@
       v-if="playState != 'finished' && playState != 'notPlaying'"
     >
 
-      <!-- <span class="game-menu-instruction-text" v-if="playState!='finished'">
-        
-      </span> -->
-
       <div 
         class="game-menu-difficulty game-difficulty-hard" 
         v-if="difficulty == 'hard' && guessingFeature.properties && playState!='finished'"
@@ -60,7 +56,7 @@
             'button-red':
               guessingFeature.id == guessedFeature.id
             ,
-            'button-border-blue':
+            'button-border-green':
               guessedFeature.id
               && guessingFeature.id != guessedFeature.id
           }"
@@ -85,7 +81,7 @@
       <div class="game-menu-difficulty game-difficulty-easy" v-if="difficulty == 'easy' && guessingFeature.properties && playState!='finished'">
         
         <div class="game-menu-instruction-text">
-          Find the
+          Find the name of the
           <span class="guessing-feature">yellow shape</span>:
         </div>
         
@@ -210,12 +206,12 @@ export default defineComponent({
       props.mapPromise.then((map)=> {
         map.setFeatureState(
           { source: props.playgroundLayer.name, id: guessedFeature.value.id },
-          { fail: false, guessing: false, success: false }
+          { fail: false, guessing: false, success: false, hover: false }
         )
 
         map.setFeatureState(
           { source: props.playgroundLayer.name, id: guessingFeature.value.id },
-          { fail: false, guessing: false, success: false }
+          { fail: false, guessing: false, success: false, hover: false }
         );
 
         if (guessingFeature.value.id == guessedFeature.value.id) {
