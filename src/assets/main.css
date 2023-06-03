@@ -36,7 +36,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: sans-serif;
 }
+/* safari bugfix select font  */
+@media screen and (-webkit-min-device-pixel-ratio:0){select {font-family: sans-serif;}}
 
 .game {
   width: 100%;
@@ -196,6 +199,7 @@ body {
   font-weight: 500;
   text-align: center;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 .game-menu-select {
@@ -207,6 +211,18 @@ body {
   cursor: pointer;
   margin-top: .25rem;
   background-color: var(--red);
+  padding-right:30px; 
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--beige) 50%),
+    linear-gradient(135deg, var(--beige) 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) calc(1em + 4px),
+    calc(100% - 15px) calc(1em + 4px);
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+
 }
 
 .game-menu-buttons {
@@ -414,6 +430,7 @@ body {
 
   .game-menu select, .game-menu .button {
     padding: 1.75vh;
+    padding-right: 30px;
     margin: 0;
   }
 

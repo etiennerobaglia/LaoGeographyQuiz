@@ -5,12 +5,12 @@
       v-if="!playing"
     >
       <div class="game-menu-select">
-        <label class="game-menu-selection-playground">Select Playground</label>
+        <label class="game-menu-selection-playground">Playground</label>
         <select 
           v-model="playgroundName"
           name="game-menu-difficulty"
         >
-          <option disabled value="">- Playground -</option>
+          <option disabled value="">- Select Playground -</option>
           <option v-for="layer in layersInfo" :value="layer.fileName">
             {{ layer.fullName }}
           </option>
@@ -18,12 +18,12 @@
       </div>
 
       <div class="game-menu-select">
-        <label class="game-menu-selection-difficulty">Select Game Difficulty</label>
+        <label class="game-menu-selection-difficulty">Game Difficulty</label>
         <select 
           v-model="difficulty" 
           name="game-menu-difficulty"
         >
-          <option disabled value="">- Difficulty -</option>
+          <option disabled value="">-&nbsp;&nbsp;&nbsp;Select Difficulty&nbsp;&nbsp;&nbsp;-</option>
           <option value="easy">Easy</option>
           <option value="hard">Hard</option>
         </select>
