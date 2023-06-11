@@ -145,7 +145,7 @@ export default defineComponent({
                 ['boolean', ['feature-state', 'success'], false],
                 .85,
                 ['boolean', ['feature-state', 'done'], false],
-                .85,
+                1,
                 0
               ]
             },
@@ -158,13 +158,13 @@ export default defineComponent({
             layout: {},
             paint: {
               'line-color': import.meta.env.VITE_blue,
-              'line-width': 2
+              'line-width': 1.5
             },
           });
 
           map.fitBounds(
             playgroundInfo.value.bounds,
-            {padding: 20}
+            {padding: 0}
           )
         })
         playing.value = true;
