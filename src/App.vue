@@ -8,7 +8,9 @@
     <div class="header">
       <div class="title-container">
         <div class="title-logo"></div>
-        <div class="title-text">ບ້ານ ລາວ ຢູ່ໃສ<br>Ban Lao Yu Sai</div>
+        <div class="title-text">
+          ບ້ານ ລາວ ຢູ່ໃສ<br>Ban Lao Yu Sai
+        </div>
       </div>
       
     </div>
@@ -24,6 +26,9 @@
     </div>
 
   </main>
+  <a class="credit" href="https://etienne.robaglia.fr">
+    etienne.robaglia.fr
+  </a>
   
 </template>
 
