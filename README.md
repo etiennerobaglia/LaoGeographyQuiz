@@ -1,7 +1,5 @@
-# 🇱🇦 BanLaoYuSai - ບ້ານ ລາວ ຢູ່ໃສ
+# 🇱🇦 LaoGeographyQuiz - BanLaoYuSai
 
-An online game to learn Lao PDR geography.
+This repository is not anymore in use, the new repository is here: [github.com/etiennerobaglia/BanLaoYuSai](https://github.com/etiennerobaglia/BanLaoYuSai).
 
-Data are from [K4D Lao PDR](https://apps.k4d.la/explorer/).
-
-[Vue 3](https://vuejs.org/), [mapbox](https://www.mapbox.com/).
+The GitHub Pages website hosted in this repository now redirects to [banlaoyusai.app/](https://banlaoyusai.app/).
